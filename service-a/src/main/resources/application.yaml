@@ -1,0 +1,12 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: service-a
+
+  datasource:
+    url: jdbc:postgresql://${SERVICE_A_DB_HOST:localhost}:${SERVICE_A_DB_PORT:5532}/${SERVICE_A_DB_NAME:service-a}
+    username: ${SERVICE_A_DB_USER:postgres}
+    password: ${SERVICE_A_DB_PASSWORD:postgres}
+    driverClassName: org.postgresql.Driver

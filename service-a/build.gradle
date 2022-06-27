@@ -1,0 +1,73 @@
+plugins {
+    id 'org.springframework.boot' version '2.7.1'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+    id 'com.google.cloud.tools.jib' version '3.2.1'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.liquibase:liquibase-core'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'org.postgresql:postgresql'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.h2database:h2'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+test {
+    useJUnitPlatform()
+    exclude '**/*IntegrationTest*'
+}
+
+
+task integrationTest(type: Test) {
+    group "verification"
+
+    useJUnitPlatform()
+    include '**/*IntegrationTest*'
+
+    testLogging {
+        events = ["passed", "failed", "skipped"]
+        exceptionFormat = 'full'
+    }
+}
+
+jib {
+    from {
+        image = 'openjdk:17.0.2-jdk-slim-buster'
+    }
+    to {
+        image = "example/${project.name}:${project.version}"
+
+    }
+    container {
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+        format = 'Docker'
+        ports = ['8081']
+    }
+}
+
+tasks.test.finalizedBy(integrationTest)
