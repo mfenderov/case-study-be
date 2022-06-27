@@ -1,0 +1,74 @@
+version: '3.8'
+services:
+  service-a:
+    image: example/service-a:0.0.1-SNAPSHOT
+    depends_on:
+      - service-a-db
+    ports:
+      - "8081:8081"
+    environment:
+      - SERVICE_A_DB_HOST=host.docker.internal
+      - SERVICE_A_DB_PORT=5532
+      - SERVICE_A_DB_NAME=service-a
+      - SERVICE_A_DB_USER=postgres
+      - SERVICE_A_DB_PASSWORD=postgres
+
+  service-a-db:
+    image: postgres:14.2-alpine
+    environment:
+      - POSTGRES_DB=service-a
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5532:5432'
+  service-b:
+    image: example/service-b:0.0.1-SNAPSHOT
+    depends_on:
+      - service-b-db
+    ports:
+      - "8082:8082"
+    environment:
+      - SERVICE_B_DB_HOST=host.docker.internal
+      - SERVICE_B_DB_PORT=5632
+      - SERVICE_B_DB_NAME=service-b
+      - SERVICE_B_DB_USER=postgres
+      - SERVICE_B_DB_PASSWORD=postgres
+  service-b-db:
+    image: postgres:14.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=service-b
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5632:5432'
+  gateway:
+    image: example/gateway:0.0.1-SNAPSHOT
+    depends_on:
+      - service-a
+      - service-b
+    ports:
+      - "8083"
+    volumes:
+      - ./gateway/logs:/var/log/gateway
+    environment:
+      - LOG-DIRECTORY=/var/log/gateway
+      - SERVICE_A_HOST=host.docker.internal
+      - SERVICE_A_PORT=8081
+      - SERVICE_B_HOST=host.docker.internal
+      - SERVICE_B_PORT=8082
+    deploy:
+      mode: replicated
+      replicas: 3
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - gateway
+    ports:
+      - "8080:8080"
+
+volumes:
+  keycloak-db_data:
+    driver: local
