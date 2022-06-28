@@ -68,7 +68,3 @@ services:
       - gateway
     ports:
       - "8080:8080"
-
-volumes:
-  keycloak-db_data:
-    driver: local

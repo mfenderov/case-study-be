@@ -1,4 +1,0 @@
-2022-06-26 11:57:27,139 INFO com.example.gateway.filter.LoggingFilter [reactor-http-epoll-2] Incoming request is routed to id: service-b, uri:http://host.docker.internal:8082/savings/b/balance
-2022-06-26 11:57:27,268 INFO com.example.gateway.filter.LoggingFilter [reactor-http-epoll-2] Incoming request is routed to id: service-b, uri:http://host.docker.internal:8082/savings/b/balance
-2022-06-26 11:57:27,276 INFO com.example.gateway.filter.LoggingFilter [reactor-http-epoll-2] Incoming request is routed to id: service-b, uri:http://host.docker.internal:8082/savings/b/balance
-2022-06-26 11:57:27,280 INFO com.example.gateway.filter.LoggingFilter [reactor-http-epoll-2] Incoming request is routed to id: service-b, uri:http://host.docker.internal:8082/savings/b/balance
